@@ -145,6 +145,16 @@ public class TeacherController {
             Teacher t = teacherRepo.findById(teaId).orElse(null);
             if (t == null) return ResponseEntity.badRequest().body("用户不存在");
             t.setPassword("******");
+
+            // 根据 collegeId 查询并设置 collegeName
+            if (t.getCollegeId() != null) {
+                collegeRepo.findById(t.getCollegeId())
+                        .ifPresent(college -> t.setCollegeName(college.getCollegeName()));
+            } else {
+                t.setCollegeName("未分配学院");
+            }
+
+
             return ResponseEntity.ok(t);
         } catch (Exception e) { return ResponseEntity.status(401).body(e.getMessage()); }
     }
